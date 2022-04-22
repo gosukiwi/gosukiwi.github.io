@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="https://gosukiwi.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://gosukiwi.github.io/" rel="alternate" type="text/html" /><updated>2022-04-22T13:14:20-03:00</updated><id>https://gosukiwi.github.io/feed.xml</id><title type="html">gosukiwi</title><subtitle>Developer, gamer, martial artist, and cat lover from Argentina</subtitle><entry><title type="html">Vim Advanced Search and Replace</title><link href="https://gosukiwi.github.io/vim/webdev/2022/04/19/vim-advanced-search-and-replace.html" rel="alternate" type="text/html" title="Vim Advanced Search and Replace" /><published>2022-04-19T20:52:00-03:00</published><updated>2022-04-19T20:52:00-03:00</updated><id>https://gosukiwi.github.io/vim/webdev/2022/04/19/vim-advanced-search-and-replace</id><content type="html" xml:base="https://gosukiwi.github.io/vim/webdev/2022/04/19/vim-advanced-search-and-replace.html"><![CDATA[<p>I find search and replace to be a remarkably interesting topic, because it touches on so many Vim concepts.</p>
+
+<p>When I started using Vim, one of the first things I wanted to do was search for some text in my project and replace it with something else.</p>
+
+<p>Unfortunately for me, it was not as simple as I had initially thought :)</p>
+
+<p>In this post I will show how several different ways to search and replace text in Vim. From the obvious, beginner-friendly way, to the more advanced, <em>vimmish</em> way.</p>
+
+<h2 id="before-we-begin-reading-key-sequences">Before we begin: Reading key sequences</h2>
+<p>I will use Vim’s format to describe sequences of keys. That means <code class="language-plaintext highlighter-rouge">&lt;C-r&gt;</code> means press the <code class="language-plaintext highlighter-rouge">CONTROL</code> key, and while holding it, press the <code class="language-plaintext highlighter-rouge">r</code> key. <code class="language-plaintext highlighter-rouge">&lt;CR&gt;</code> means <code class="language-plaintext highlighter-rouge">ENTER</code> key, <code class="language-plaintext highlighter-rouge">&lt;Esc&gt;</code> means <code class="language-plaintext highlighter-rouge">ESCAPE</code>, <code class="language-plaintext highlighter-rouge">&lt;Space&gt;</code> means <code class="language-plaintext highlighter-rouge">SPACEBAR</code>, etc.</p>
+
+<h2 id="searching-in-a-single-file">Searching in a single file</h2>
+<p>Let’s start with our most simple use-case: Searching for some text in a single file.</p>
+
+<p>This is quite a common need. In my regular Vimming, I think one of my most used (and favorite) keys is <code class="language-plaintext highlighter-rouge">*</code>. In NORMAL mode, simply press <code class="language-plaintext highlighter-rouge">*</code> on top of a word, and Vim will highlight all the instances of that word in your current buffer.
+If you want to go to the next instance, press <code class="language-plaintext highlighter-rouge">n</code>, if you want to go back, press <code class="language-plaintext highlighter-rouge">N</code>.</p>
+
+<p>I use that a lot for typos, if I want to make sure I didn’t make a typo on some word, and I know that word is already defined somewhere in the same file, I quickly press <code class="language-plaintext highlighter-rouge">*</code> to see if other words highlight.</p>
+
+<script id="asciicast-488618" src="https://asciinema.org/a/488618.js" async=""></script>
+
+<p>It’s also useful to quickly navigate to all instances of that word, for example, navigate through all the usages of some variable in your current file.</p>
+
+<h3 id="section-help">Section Help</h3>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">:help 03.8</code></li>
+  <li><code class="language-plaintext highlighter-rouge">:help *</code></li>
+  <li><code class="language-plaintext highlighter-rouge">:help n</code></li>
+</ul>
+
+<h2 id="replacing-in-a-single-file-one-by-one">Replacing in a single file: One by one</h2>
+<p>Another quite common need is to rename an identifier. This can be tricky when the variable exists in multiple files, but for local variables, it’s amazingly easy.</p>
+
+<p>You can use the <code class="language-plaintext highlighter-rouge">.</code> operator to <em>repeat the last thing I did in INSERT mode</em>, together with <code class="language-plaintext highlighter-rouge">*</code> and <code class="language-plaintext highlighter-rouge">n</code> you can easily do fine-grained replacements.</p>
+
+<script id="asciicast-488620" src="https://asciinema.org/a/488620.js" async=""></script>
+
+<p>With this approach you can skip some matches, so it’s great when you don’t want to just replace all matches, and instead want to choose which ones you want to operate on.</p>
+
+<h3 id="section-help-1">Section Help</h3>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">:help 04.3</code></li>
+</ul>
+
+<h2 id="replacing-in-a-single-file-bulk">Replacing in a single file: Bulk</h2>
+<p>Alternatively, you can replace all matches in the file in one go, with the <code class="language-plaintext highlighter-rouge">:substitute</code> command, or just <code class="language-plaintext highlighter-rouge">:s</code>, as it’s normally used.</p>
+
+<p>Without flags, <code class="language-plaintext highlighter-rouge">:substitute</code> will only replace one match per line. Most of the time, the <code class="language-plaintext highlighter-rouge">g</code> flag is passed, to substitute all matches. You can also pass the <code class="language-plaintext highlighter-rouge">c</code> flag so Vim asks for confirmation before doing each replacement.</p>
+
+<div class="language-vimscript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">:</span>%s<span class="sr">/this/</span>that/gc
+</code></pre></div></div>
+
+<p>If you already were searching for something using <code class="language-plaintext highlighter-rouge">/</code> or <code class="language-plaintext highlighter-rouge">?</code>, then Vim populates the search register for you. When using <code class="language-plaintext highlighter-rouge">:s</code>, and the search string is empty, Vim will use the search register to perform the replacement.</p>
+
+<p>For example, you were searching for all instances of the word <code class="language-plaintext highlighter-rouge">this</code> by typing <code class="language-plaintext highlighter-rouge">/this</code>. You then notice you want to change them.</p>
+
+<p>You can now simply type <code class="language-plaintext highlighter-rouge">:%s//that/</code> to run the replacement. Vim “remembers” our last search.</p>
+
+<p>You can also manually use the register by typing <code class="language-plaintext highlighter-rouge">&lt;C-r&gt;</code> followed by the register you want to use, such as <code class="language-plaintext highlighter-rouge">"</code>:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>:%s/&lt;C-r&gt;"/replacement/g
+</code></pre></div></div>
+
+<h3 id="section-help-2">Section help</h3>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">:help registers</code></li>
+  <li><code class="language-plaintext highlighter-rouge">:help 10.2</code></li>
+  <li><code class="language-plaintext highlighter-rouge">:help i_CTRL-R</code></li>
+</ul>
+
+<h2 id="searching-in-multiple-files">Searching in multiple files</h2>
+<p>To search across multiple files, Vim provides the <code class="language-plaintext highlighter-rouge">:vimgrep</code> command.</p>
+
+<p>It works out of the box. For example, you can run the following command to search for all instances of <code class="language-plaintext highlighter-rouge">SomeModelClass</code> inside the <code class="language-plaintext highlighter-rouge">app/models</code> directory:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>:vimgrep SomeModelClass app/models
+</code></pre></div></div>
+
+<p>Nice! By default, Vim will populate the <em>quickfix</em> list with the search results, but it won’t display it. You can open the quickfix window with the <code class="language-plaintext highlighter-rouge">:copen</code> command.</p>
+
+<p>While that works, it’s not the best. You see <code class="language-plaintext highlighter-rouge">:vimgrep</code> uses Vim’s internal implementation of grep, which is totally compatible but terribly slow. Not really what you want to use for most modern software projects (<em>ahem</em> <code class="language-plaintext highlighter-rouge">node_modules</code> <em>ahem</em>).</p>
+
+<p>Experienced Vim users will instead use something like <a href="https://github.com/BurntSushi/ripgrep">ripgrep</a> or <a href="https://github.com/ggreer/the_silver_searcher">ag</a> for searching across multiple files.</p>
+
+<p>Being the good first-class UNIX citizen that Vim is, it integrates nicely with external programs, so we can easily set this up:</p>
+
+<div class="language-vimscript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">set</span> <span class="nb">grepprg</span><span class="p">=</span>rg\ <span class="p">--</span><span class="k">vimgrep</span>\ <span class="p">--</span>smart<span class="p">-</span>case
+</code></pre></div></div>
+
+<p>We can now use the <code class="language-plaintext highlighter-rouge">:grep</code> command to search in our files, using <code class="language-plaintext highlighter-rouge">ripgrep</code>!</p>
+
+<div class="language-vimscript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">:</span><span class="k">grep</span> myvariable app<span class="sr">/models/</span>
+</code></pre></div></div>
+
+<h3 id="section-help-3">Section help</h3>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">:help :vimgrep</code></li>
+  <li><code class="language-plaintext highlighter-rouge">:help :grep</code></li>
+  <li><code class="language-plaintext highlighter-rouge">:help grepprg</code></li>
+  <li><code class="language-plaintext highlighter-rouge">:help quickfix</code></li>
+</ul>
+
+<h2 id="replacing-in-multiple-files">Replacing in multiple files</h2>
+<p>Once you have performed your search, and have the quickfix list populated with all your matches, you can then run a replacement with:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>:cfdo %s/pattern/replacement/g
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">:cfdo</code> command will take each file in your quickfix list and apply a command to it. We use the <code class="language-plaintext highlighter-rouge">:substitute</code> command (a.k.a <code class="language-plaintext highlighter-rouge">:s</code>) to do the actual replacement.</p>
+
+<p>That’s it! This approach might seem complicated to non-Vim users, but it is made of smaller pieces, composed together to create one big action.</p>
+
+<p>Being composable, I can replace commands here and there. For example, instead of replacing, I could actually delete all lines containing the match, with <code class="language-plaintext highlighter-rouge">:global</code>:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>:cfdo %g/&lt;my-grep-pattern&gt;/d
+</code></pre></div></div>
+
+<h3 id="section-help-4">Section help</h3>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">:help :cfdo</code></li>
+  <li><code class="language-plaintext highlighter-rouge">:help :cdo</code></li>
+  <li><code class="language-plaintext highlighter-rouge">:help :global</code></li>
+</ul>
+
+<h2 id="filtering-results">Filtering results</h2>
+<p>What if you want to make a replacement, but only to <strong>some</strong> of the files in your quickfix list? Do you run a second, more specific search?</p>
+
+<p>No need! Vim provides a plugin named <code class="language-plaintext highlighter-rouge">cfilter</code>, which can helps us in this case. You can use it by adding this to your <code class="language-plaintext highlighter-rouge">.vimrc</code>:</p>
+
+<div class="language-vimscript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">packadd</span><span class="p">!</span> cfilter
+</code></pre></div></div>
+
+<p>Check it out with <code class="language-plaintext highlighter-rouge">:help cfilter</code>. It gives you a nifty little command to filter the results of the quickfix list: <code class="language-plaintext highlighter-rouge">:Cfilter</code>:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>:Cfilter app/models  # display only entries matching `app/models`
+:Cfilter! .swp       # remove entries matching `.swp`
+</code></pre></div></div>
+
+<p>That’s great, and most of the time, it’s just enough. But sometimes, it might make sense to cherry-pick the entries you want to keep, by going one by one over them. For that, I have mapped <code class="language-plaintext highlighter-rouge">x</code> to remove the entry under the cursor:</p>
+
+<div class="language-vimscript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span><span class="p">!</span> <span class="nv">s:QfRemoveAtCursor</span><span class="p">()</span> abort
+  <span class="k">let</span> currline <span class="p">=</span> <span class="nb">line</span><span class="p">(</span><span class="s1">'.'</span><span class="p">)</span>
+  <span class="k">let</span> <span class="nb">items</span> <span class="p">=</span> <span class="nb">getqflist</span><span class="p">()-&gt;</span><span class="k">filter</span><span class="p">({</span> <span class="nb">index</span> <span class="p">-&gt;</span> <span class="p">(</span><span class="nb">index</span> <span class="p">+</span> <span class="m">1</span><span class="p">)</span> <span class="p">!=</span> currline <span class="p">})</span>
+  <span class="k">call</span> <span class="nb">setqflist</span><span class="p">(</span><span class="nb">items</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">)</span>
+  <span class="nb">execute</span> <span class="s1">'normal '</span> <span class="p">.</span> currline <span class="p">.</span> <span class="s1">'G'</span>
+<span class="k">endfunction</span>
+
+augroup quickfix
+  autocmd<span class="p">!</span>
+  autocmd <span class="nb">FileType</span> qf nnoremap <span class="p">&lt;</span><span class="k">buffer</span><span class="p">&gt;&lt;</span><span class="k">silent</span><span class="p">&gt;</span> <span class="k">x</span> <span class="p">:</span><span class="k">call</span> <span class="p">&lt;</span>SID<span class="p">&gt;</span>QfRemoveAtCursor<span class="p">()&lt;</span>CR<span class="p">&gt;</span>
+augroup END
+</code></pre></div></div>
+
+<p>Now whenever I press <code class="language-plaintext highlighter-rouge">x</code> on top of an entry in the quickfix list window, it gets deleted.</p>
+
+<p>Trimming the quickfix list like this is useful, not only to find what you are looking for, but to perform batch operations on all matches with <code class="language-plaintext highlighter-rouge">:cdo</code> and <code class="language-plaintext highlighter-rouge">:cfdo</code>!</p>
+
+<h3 id="section-help-5">Section help</h3>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">:help usr_40.txt</code></li>
+  <li><code class="language-plaintext highlighter-rouge">:help usr_41.txt</code></li>
+</ul>
+
+<h2 id="grep">:Grep</h2>
+<p>Remember we had to manually run <code class="language-plaintext highlighter-rouge">:copen</code> to see the quickfix list after every
+<code class="language-plaintext highlighter-rouge">:grep</code>? Let’s make that automatic by creating a custom <code class="language-plaintext highlighter-rouge">:Grep</code> command to
+open the quickfix list for us:</p>
+
+<div class="language-vimscript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span><span class="p">!</span> <span class="nv">s:Grep</span><span class="p">(...)</span> abort
+  <span class="k">let</span> pattern <span class="p">=</span> <span class="nb">get</span><span class="p">(</span><span class="k">a</span><span class="p">:,</span> <span class="m">1</span><span class="p">,</span> <span class="s1">''</span><span class="p">)</span>
+  <span class="k">if</span> pattern <span class="p">==</span> <span class="s1">''</span> <span class="p">|</span> <span class="k">return</span> <span class="p">|</span> <span class="k">endif</span>
+
+  <span class="k">let</span> <span class="nb">path</span> <span class="p">=</span> <span class="nb">get</span><span class="p">(</span><span class="k">a</span><span class="p">:,</span> <span class="m">2</span><span class="p">,</span> <span class="s1">'.'</span><span class="p">)</span>
+  <span class="nb">execute</span> <span class="s1">'silent! grep! "'</span> <span class="p">.</span> <span class="nb">escape</span><span class="p">(</span>pattern<span class="p">,</span> <span class="s1">'"-'</span><span class="p">)</span> <span class="p">.</span> <span class="s1">'" '</span> <span class="p">.</span> <span class="nb">path</span> <span class="p">.</span> <span class="s1">' | redraw! | copen'</span>
+<span class="k">endfunction</span>
+
+command<span class="p">!</span> <span class="p">-</span>nargs<span class="p">=+</span> <span class="p">-</span><span class="nb">complete</span><span class="p">=</span><span class="k">file</span> Grep <span class="k">silent</span><span class="p">!</span> <span class="k">call</span> <span class="nv">s:Grep</span><span class="p">(&lt;</span><span class="k">f</span><span class="p">-</span><span class="k">args</span><span class="p">&gt;)</span>
+</code></pre></div></div>
+
+<p>Neat! Now all we have to do is use <code class="language-plaintext highlighter-rouge">:Grep</code> instead of <code class="language-plaintext highlighter-rouge">:grep</code>! We even get file autocompletion for grep’s optional second parameter.</p>
+
+<h3 id="section-help-6">Section help</h3>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">:help usr_40.txt</code></li>
+  <li><code class="language-plaintext highlighter-rouge">:help key-mapping</code></li>
+  <li><code class="language-plaintext highlighter-rouge">:help mapleader</code></li>
+  <li><code class="language-plaintext highlighter-rouge">:help i_CTRL-R</code></li>
+</ul>
+
+<h2 id="replace">:Replace</h2>
+<p>Following on <code class="language-plaintext highlighter-rouge">:Grep</code>, let’s implement a <code class="language-plaintext highlighter-rouge">:Replace</code> command, so our whole search and replace quest can be reduced to just running two easy to remember commands.</p>
+
+<div class="language-vimscript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="p">!</span><span class="nb">exists</span><span class="p">(</span><span class="s1">'s:latest_greps'</span><span class="p">)</span>
+  <span class="k">let</span> <span class="nv">s:latest_greps</span> <span class="p">=</span> <span class="p">{}</span>
+<span class="k">endif</span>
+
+<span class="k">function</span><span class="p">!</span> <span class="nv">s:Grep</span><span class="p">(...)</span> abort
+  <span class="k">let</span> pattern <span class="p">=</span> <span class="nb">get</span><span class="p">(</span><span class="k">a</span><span class="p">:,</span> <span class="m">1</span><span class="p">,</span> <span class="s1">''</span><span class="p">)</span>
+  <span class="k">if</span> pattern <span class="p">==</span> <span class="s1">''</span> <span class="p">|</span> <span class="k">return</span> <span class="p">|</span> <span class="k">endif</span>
+
+  <span class="k">let</span> <span class="nv">s:latest_greps</span><span class="p">[</span>pattern<span class="p">]</span> <span class="p">=</span> <span class="m">1</span>
+  <span class="k">let</span> <span class="nb">path</span> <span class="p">=</span> <span class="nb">get</span><span class="p">(</span><span class="k">a</span><span class="p">:,</span> <span class="m">2</span><span class="p">,</span> <span class="s1">'.'</span><span class="p">)</span>
+  <span class="nb">execute</span> <span class="s1">'silent! grep! "'</span> <span class="p">.</span> <span class="nb">escape</span><span class="p">(</span>pattern<span class="p">,</span> <span class="s1">'"-'</span><span class="p">)</span> <span class="p">.</span> <span class="s1">'" '</span> <span class="p">.</span> <span class="nb">path</span> <span class="p">.</span> <span class="s1">' | redraw! | copen'</span>
+<span class="k">endfunction</span>
+
+<span class="k">function</span><span class="p">!</span> <span class="nv">s:Replace</span><span class="p">(</span>original<span class="p">,</span> replacement<span class="p">)</span> abort
+  <span class="k">if</span> <span class="nv">a:original</span> <span class="p">==</span> <span class="s1">''</span> <span class="p">||</span> <span class="nv">a:replacement</span> <span class="p">==</span> <span class="s1">''</span> <span class="p">|</span> <span class="k">return</span> <span class="p">|</span> <span class="k">endif</span>
+
+  <span class="nb">execute</span> <span class="s1">'cfdo %s/'</span> <span class="p">.</span> <span class="nb">escape</span><span class="p">(</span><span class="nv">a:original</span><span class="p">,</span> <span class="s1">'/'</span><span class="p">)</span> <span class="p">.</span> <span class="s1">'/'</span> <span class="p">.</span> <span class="nv">a:replacement</span> <span class="p">.</span> <span class="s1">'/ge'</span>
+<span class="k">endfunction</span>
+
+<span class="k">function</span><span class="p">!</span> LatestGreps<span class="p">(</span>ArgLead<span class="p">,</span> CmdLine<span class="p">,</span> CursorPos<span class="p">)</span>
+  <span class="k">return</span> <span class="nb">keys</span><span class="p">(</span><span class="nv">s:latest_greps</span><span class="p">)</span>
+<span class="k">endfunction</span>
+
+command<span class="p">!</span> <span class="p">-</span>nargs<span class="p">=+</span> <span class="p">-</span><span class="nb">complete</span><span class="p">=</span><span class="k">file</span> Grep <span class="k">silent</span><span class="p">!</span> <span class="k">call</span> <span class="nv">s:Grep</span><span class="p">(&lt;</span><span class="k">f</span><span class="p">-</span><span class="k">args</span><span class="p">&gt;)</span>
+command<span class="p">!</span> <span class="p">-</span>nargs<span class="p">=+</span> <span class="p">-</span><span class="nb">complete</span><span class="p">=</span>customlist<span class="p">,</span>LatestGreps Replace <span class="k">silent</span><span class="p">!</span> <span class="k">call</span> <span class="nv">s:Replace</span><span class="p">(&lt;</span><span class="k">f</span><span class="p">-</span><span class="k">args</span><span class="p">&gt;)</span>
+
+nnoremap <span class="p">&lt;</span>Leader<span class="p">&gt;</span><span class="k">g</span> <span class="p">:</span>Grep<span class="p">&lt;</span>Space<span class="p">&gt;</span>
+nnoremap <span class="p">&lt;</span><span class="k">silent</span><span class="p">&gt;</span> <span class="p">&lt;</span>Leader<span class="p">&gt;</span><span class="k">r</span> <span class="p">:</span><span class="k">call</span> <span class="nb">feedkeys</span><span class="p">(</span><span class="s1">':Replace&lt;Space&gt;&lt;Tab&gt;'</span><span class="p">,</span> <span class="s1">'t'</span><span class="p">)&lt;</span>CR<span class="p">&gt;</span>
+</code></pre></div></div>
+
+<p>Our <code class="language-plaintext highlighter-rouge">:Grep</code> now stores a list of previous searches, so it can then be used as autocompletion for <code class="language-plaintext highlighter-rouge">:Replace</code>.</p>
+
+<p><code class="language-plaintext highlighter-rouge">:Replace</code> itself simply runs <code class="language-plaintext highlighter-rouge">:cfdo</code> with a <code class="language-plaintext highlighter-rouge">:substitute</code> command. It takes two arguments: a search string, and a replacement string. The search string is autocompleted, so we don’t have to worry about it.</p>
+
+<p>Finally we map <code class="language-plaintext highlighter-rouge">&lt;Leader&gt;g</code> to the <code class="language-plaintext highlighter-rouge">:Grep</code> command, and <code class="language-plaintext highlighter-rouge">&lt;Leader&gt;r</code> to the <code class="language-plaintext highlighter-rouge">:Replace</code> command.</p>
+
+<p>When searching, all we need to do now is press <code class="language-plaintext highlighter-rouge">&lt;Leader&gt;g</code>, and type what we want. For replacing, we simply press <code class="language-plaintext highlighter-rouge">&lt;Leader&gt;r</code> and type our replacement.</p>
+
+<script id="asciicast-488616" src="https://asciinema.org/a/488616.js" async=""></script>
+
+<p>Now we’re talking! We can even filter the quickfix list in any way we want before doing our replacement. Or we could make the replacement confirm on each match, if we wanted to, using the <code class="language-plaintext highlighter-rouge">c</code> flag of the <code class="language-plaintext highlighter-rouge">:substitute</code> command.</p>
+
+<p>You can also run all the search and replace machinery in a single file if you want, too. Simply do <code class="language-plaintext highlighter-rouge">:Grep my-pattern %</code> to search in the current buffer.</p>
+
+<h3 id="section-help-7">Section help</h3>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">:help usr_40.txt</code></li>
+  <li><code class="language-plaintext highlighter-rouge">:help usr_41.txt</code></li>
+</ul>
+
+<h2 id="conclusion">Conclusion</h2>
+<p>In this post I showed several ways to search and replace text in Vim.</p>
+
+<p>It might be more complex than in regular editors, but that complexity has several advantages. Composability being one of the big ones.</p>
+
+<p>Composability is the way of Vim. It allows you to compose several small atoms together, through a “Vim language”, into something bigger and more complex. It gives Vim users a lot of power, and it’s incredibly fun to learn :)</p>
+
+<p>Every new thing you learn in Vim adds a lot to your final user experience, because you can compose it with all the other tools you know.</p>
+
+<p>Let me know of any feedback you might have - I’m still learning Vim :) - and I hope you find this useful!</p>]]></content><author><name></name></author><category term="vim" /><category term="webdev" /><summary type="html"><![CDATA[I find search and replace to be a remarkably interesting topic, because it touches on so many Vim concepts. When I started using Vim, one of the first things I wanted to do was search for some text in my project and replace it with something else. Unfortunately for me, it was not as simple as I had initially thought :) In this post I will show how several different ways to search and replace text in Vim. From the obvious, beginner-friendly way, to the more advanced, vimmish way. Before we begin: Reading key sequences I will use Vim’s format to describe sequences of keys. That means &lt;C-r&gt; means press the CONTROL key, and while holding it, press the r key. &lt;CR&gt; means ENTER key, &lt;Esc&gt; means ESCAPE, &lt;Space&gt; means SPACEBAR, etc. Searching in a single file Let’s start with our most simple use-case: Searching for some text in a single file. This is quite a common need. In my regular Vimming, I think one of my most used (and favorite) keys is *. In NORMAL mode, simply press * on top of a word, and Vim will highlight all the instances of that word in your current buffer. If you want to go to the next instance, press n, if you want to go back, press N. I use that a lot for typos, if I want to make sure I didn’t make a typo on some word, and I know that word is already defined somewhere in the same file, I quickly press * to see if other words highlight. It’s also useful to quickly navigate to all instances of that word, for example, navigate through all the usages of some variable in your current file. Section Help :help 03.8 :help * :help n Replacing in a single file: One by one Another quite common need is to rename an identifier. This can be tricky when the variable exists in multiple files, but for local variables, it’s amazingly easy. You can use the . operator to repeat the last thing I did in INSERT mode, together with * and n you can easily do fine-grained replacements. With this approach you can skip some matches, so it’s great when you don’t want to just replace all matches, and instead want to choose which ones you want to operate on. Section Help :help 04.3 Replacing in a single file: Bulk Alternatively, you can replace all matches in the file in one go, with the :substitute command, or just :s, as it’s normally used. Without flags, :substitute will only replace one match per line. Most of the time, the g flag is passed, to substitute all matches. You can also pass the c flag so Vim asks for confirmation before doing each replacement. :%s/this/that/gc If you already were searching for something using / or ?, then Vim populates the search register for you. When using :s, and the search string is empty, Vim will use the search register to perform the replacement. For example, you were searching for all instances of the word this by typing /this. You then notice you want to change them. You can now simply type :%s//that/ to run the replacement. Vim “remembers” our last search. You can also manually use the register by typing &lt;C-r&gt; followed by the register you want to use, such as ": :%s/&lt;C-r&gt;"/replacement/g Section help :help registers :help 10.2 :help i_CTRL-R Searching in multiple files To search across multiple files, Vim provides the :vimgrep command. It works out of the box. For example, you can run the following command to search for all instances of SomeModelClass inside the app/models directory: :vimgrep SomeModelClass app/models Nice! By default, Vim will populate the quickfix list with the search results, but it won’t display it. You can open the quickfix window with the :copen command. While that works, it’s not the best. You see :vimgrep uses Vim’s internal implementation of grep, which is totally compatible but terribly slow. Not really what you want to use for most modern software projects (ahem node_modules ahem). Experienced Vim users will instead use something like ripgrep or ag for searching across multiple files. Being the good first-class UNIX citizen that Vim is, it integrates nicely with external programs, so we can easily set this up: set grepprg=rg\ --vimgrep\ --smart-case We can now use the :grep command to search in our files, using ripgrep! :grep myvariable app/models/ Section help :help :vimgrep :help :grep :help grepprg :help quickfix Replacing in multiple files Once you have performed your search, and have the quickfix list populated with all your matches, you can then run a replacement with: :cfdo %s/pattern/replacement/g The :cfdo command will take each file in your quickfix list and apply a command to it. We use the :substitute command (a.k.a :s) to do the actual replacement. That’s it! This approach might seem complicated to non-Vim users, but it is made of smaller pieces, composed together to create one big action. Being composable, I can replace commands here and there. For example, instead of replacing, I could actually delete all lines containing the match, with :global: :cfdo %g/&lt;my-grep-pattern&gt;/d Section help :help :cfdo :help :cdo :help :global Filtering results What if you want to make a replacement, but only to some of the files in your quickfix list? Do you run a second, more specific search? No need! Vim provides a plugin named cfilter, which can helps us in this case. You can use it by adding this to your .vimrc: packadd! cfilter Check it out with :help cfilter. It gives you a nifty little command to filter the results of the quickfix list: :Cfilter: :Cfilter app/models # display only entries matching `app/models` :Cfilter! .swp # remove entries matching `.swp` That’s great, and most of the time, it’s just enough. But sometimes, it might make sense to cherry-pick the entries you want to keep, by going one by one over them. For that, I have mapped x to remove the entry under the cursor: function! s:QfRemoveAtCursor() abort let currline = line('.') let items = getqflist()-&gt;filter({ index -&gt; (index + 1) != currline }) call setqflist(items, 'r') execute 'normal ' . currline . 'G' endfunction augroup quickfix autocmd! autocmd FileType qf nnoremap &lt;buffer&gt;&lt;silent&gt; x :call &lt;SID&gt;QfRemoveAtCursor()&lt;CR&gt; augroup END Now whenever I press x on top of an entry in the quickfix list window, it gets deleted. Trimming the quickfix list like this is useful, not only to find what you are looking for, but to perform batch operations on all matches with :cdo and :cfdo! Section help :help usr_40.txt :help usr_41.txt :Grep Remember we had to manually run :copen to see the quickfix list after every :grep? Let’s make that automatic by creating a custom :Grep command to open the quickfix list for us: function! s:Grep(...) abort let pattern = get(a:, 1, '') if pattern == '' | return | endif let path = get(a:, 2, '.') execute 'silent! grep! "' . escape(pattern, '"-') . '" ' . path . ' | redraw! | copen' endfunction command! -nargs=+ -complete=file Grep silent! call s:Grep(&lt;f-args&gt;) Neat! Now all we have to do is use :Grep instead of :grep! We even get file autocompletion for grep’s optional second parameter. Section help :help usr_40.txt :help key-mapping :help mapleader :help i_CTRL-R :Replace Following on :Grep, let’s implement a :Replace command, so our whole search and replace quest can be reduced to just running two easy to remember commands. if !exists('s:latest_greps') let s:latest_greps = {} endif function! s:Grep(...) abort let pattern = get(a:, 1, '') if pattern == '' | return | endif let s:latest_greps[pattern] = 1 let path = get(a:, 2, '.') execute 'silent! grep! "' . escape(pattern, '"-') . '" ' . path . ' | redraw! | copen' endfunction function! s:Replace(original, replacement) abort if a:original == '' || a:replacement == '' | return | endif execute 'cfdo %s/' . escape(a:original, '/') . '/' . a:replacement . '/ge' endfunction function! LatestGreps(ArgLead, CmdLine, CursorPos) return keys(s:latest_greps) endfunction command! -nargs=+ -complete=file Grep silent! call s:Grep(&lt;f-args&gt;) command! -nargs=+ -complete=customlist,LatestGreps Replace silent! call s:Replace(&lt;f-args&gt;) nnoremap &lt;Leader&gt;g :Grep&lt;Space&gt; nnoremap &lt;silent&gt; &lt;Leader&gt;r :call feedkeys(':Replace&lt;Space&gt;&lt;Tab&gt;', 't')&lt;CR&gt; Our :Grep now stores a list of previous searches, so it can then be used as autocompletion for :Replace. :Replace itself simply runs :cfdo with a :substitute command. It takes two arguments: a search string, and a replacement string. The search string is autocompleted, so we don’t have to worry about it. Finally we map &lt;Leader&gt;g to the :Grep command, and &lt;Leader&gt;r to the :Replace command. When searching, all we need to do now is press &lt;Leader&gt;g, and type what we want. For replacing, we simply press &lt;Leader&gt;r and type our replacement. Now we’re talking! We can even filter the quickfix list in any way we want before doing our replacement. Or we could make the replacement confirm on each match, if we wanted to, using the c flag of the :substitute command. You can also run all the search and replace machinery in a single file if you want, too. Simply do :Grep my-pattern % to search in the current buffer. Section help :help usr_40.txt :help usr_41.txt Conclusion In this post I showed several ways to search and replace text in Vim. It might be more complex than in regular editors, but that complexity has several advantages. Composability being one of the big ones. Composability is the way of Vim. It allows you to compose several small atoms together, through a “Vim language”, into something bigger and more complex. It gives Vim users a lot of power, and it’s incredibly fun to learn :) Every new thing you learn in Vim adds a lot to your final user experience, because you can compose it with all the other tools you know. Let me know of any feedback you might have - I’m still learning Vim :) - and I hope you find this useful!]]></summary></entry></feed>

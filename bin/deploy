@@ -1,5 +1,7 @@
 #!/bin/bash
-bundle exec jekyll build && rm -rf _site && rm -rf docs && cp -r _site docs
+rm -rf _site
+rm -rf docs
+bundle exec jekyll build && cp -r _site docs
 git add .
 git commit -m "Deployment"
 git push origin master
