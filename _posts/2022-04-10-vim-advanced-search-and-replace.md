@@ -2,7 +2,7 @@
 layout: post
 title:  "Vim Advanced Search and Replace"
 date:   2022-04-19 20:52:00 -0300
-categories: vim webdev
+categories: vim
 ---
 I find search and replace to be a remarkably interesting topic, because it touches on so many Vim concepts.
 
