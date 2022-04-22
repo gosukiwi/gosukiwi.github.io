@@ -4,15 +4,12 @@ title: About
 permalink: /about/
 ---
 
-This is the base Jekyll theme. You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at [jekyllrb.com](https://jekyllrb.com/)
+Federico is a web developer from Argentina. He has been programming since he
+was a young teenager, and has a passion for open source and web development in
+general, while also occasionally dwelling  into programming languages and
+gamedev.
 
-You can find the source code for Minima at GitHub:
-[jekyll][jekyll-organization] /
-[minima](https://github.com/jekyll/minima)
+Besides programming, he loves to game. Games like League of Legends, Diablo 3
+and Northgard.
 
-You can find the source code for Jekyll at GitHub:
-[jekyll][jekyll-organization] /
-[jekyll](https://github.com/jekyll/jekyll)
-
-
-[jekyll-organization]: https://github.com/jekyll
+He is also a practitioner of Taijiquan (or Tai Chi, as it's normally known).
