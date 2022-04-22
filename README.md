@@ -3,7 +3,7 @@
 
 ## Writing
 
-    $ bundle exec jekyll serve
+    $ bin/watch
 
 ## Deployment
 
