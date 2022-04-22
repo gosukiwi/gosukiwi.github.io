@@ -10,13 +10,13 @@ files = Dir[basepath.join('_drafts/*')].map do |draft|
   Pathname.new(draft).basename
 end
 
-puts "Publish draft:\n\n"
+puts "publish draft:\n\n"
 
 files.each_with_index do |file, index|
   puts "#{index + 1}. #{file}"
 end
 
-puts "\nWhich one do you want to publish?"
+puts
 line = Readline.readline('(number)> ', true)
 
 index = line.to_i - 1
@@ -32,4 +32,4 @@ to = basepath.join('_posts', new_name)
 FileUtils.cp(from, to)
 FileUtils.rm(from)
 
-puts "#{from.relative_path_from(basepath)} => #{to.relative_path_from(basepath)}"
+puts "published\n\t#{from.relative_path_from(basepath)} => #{to.relative_path_from(basepath)}"

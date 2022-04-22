@@ -1,0 +1,13 @@
+#!/bin/bash
+
+NAME="draft-$(uuidgen).md"
+
+echo "---
+layout: post
+title:  \"Some title\"
+date:   2022-04-29
+categories: vim webdev
+---" >> "_drafts/$NAME"
+
+echo "created
+  _drafts/$NAME"
