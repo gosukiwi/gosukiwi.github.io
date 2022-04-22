@@ -42,6 +42,7 @@ plugins:
 #
 exclude:
   - README.md
+  - bin/
 #   - .sass-cache/
 #   - .jekyll-cache/
 #   - gemfiles/
