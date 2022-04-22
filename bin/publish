@@ -32,4 +32,4 @@ to = basepath.join('_posts', new_name)
 FileUtils.cp(from, to)
 FileUtils.rm(from)
 
-puts "published\n\t#{from.relative_path_from(basepath)} => #{to.relative_path_from(basepath)}"
+puts "moved\n\t#{from.relative_path_from(basepath)} => #{to.relative_path_from(basepath)}"
