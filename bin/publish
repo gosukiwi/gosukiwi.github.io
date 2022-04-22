@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+
+require 'readline'
+require 'pathname'
+require 'fileutils'
+# date:   2022-04-19 20:52:00 -0300
+
+basepath = Pathname.new("#{File.dirname(__FILE__)}/../")
+files = Dir[basepath.join('_drafts/*')].map do |draft|
+  Pathname.new(draft).basename
+end
+
+puts "Publish draft:\n\n"
+
+files.each_with_index do |file, index|
+  puts "#{index + 1}. #{file}"
+end
+
+puts "\nWhich one do you want to publish?"
+line = Readline.readline('(number)> ', true)
+
+index = line.to_i - 1
+return if index == -1
+
+file = files[index]
+return if file.nil?
+
+now = Time.now
+new_name = "#{now.year.to_s.rjust(2, '0')}-#{now.month.to_s.rjust(2, '0')}-#{now.day.to_s.rjust(2, '0')}-#{file}"
+from = basepath.join('_drafts', file)
+to = basepath.join('_posts', new_name)
+FileUtils.cp(from, to)
+FileUtils.rm(from)
+
+puts "#{from.relative_path_from(basepath)} => #{to.relative_path_from(basepath)}"
