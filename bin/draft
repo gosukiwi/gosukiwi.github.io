@@ -4,7 +4,7 @@ NAME="draft-$(uuidgen).md"
 
 echo "---
 layout: post
-title:  \"Some title\"
+title:  \"$1\"
 date:   2022-04-29
 categories: vim webdev
 ---" >> "_drafts/$NAME"
