@@ -34,6 +34,43 @@ You can use `zg` to add a word, and from insert mode, `C-s C-s` will try to
 autocomplete the current word.
 
 ## Preview
+Vim shines at integrating with external programs. We can use
+[Pandoc](https://pandoc.org/) to compile Markdown files to HTML.  All we need
+to do then is open those files to have our preview:
+
+```vim
+function! s:MarkdownPreview() abort
+  let filename = tempname() . '.html'
+  call system('pandoc "' . expand('%:p') . '" -f markdown -t html -s -o ' . filename)
+  call system(s:OpenCommand() . ' ' . filename)
+endfunction
+
+function! s:OpenCommand() abort
+  if exists("$WSLENV")
+    " Windows WSL
+    return "cmd.exe /c start /b"
+  elseif executable('cmd.exe')
+    " Windows
+    return "start /b explorer"
+  elseif executable("xdg-open")
+    " Linux/BSD
+    return "xdg-open"
+  elseif executable("open")
+    " macOS
+    return "open"
+  endif
+endfunction
+
+augroup markdown
+  autocmd!
+  " ...
+  autocmd FileType markdown command! Preview call s:MarkdownPreview()
+augroup END
+```
+
+We now have a `:Preview` command we can use from markdown which will
+automatically open our default browser and display our compiled markdown for
+us to see.
 
 ## Folding
 
