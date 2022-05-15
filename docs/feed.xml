@@ -1,4 +1,141 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="https://gosukiwi.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://gosukiwi.github.io/" rel="alternate" type="text/html" /><updated>2022-04-26T12:27:38-03:00</updated><id>https://gosukiwi.github.io/feed.xml</id><title type="html">gosukiwi</title><subtitle>Developer, gamer, martial artist, and cat lover from Argentina</subtitle><entry><title type="html">Vim Advanced Search and Replace</title><link href="https://gosukiwi.github.io/vim/2022/04/19/vim-advanced-search-and-replace.html" rel="alternate" type="text/html" title="Vim Advanced Search and Replace" /><published>2022-04-19T20:52:00-03:00</published><updated>2022-04-19T20:52:00-03:00</updated><id>https://gosukiwi.github.io/vim/2022/04/19/vim-advanced-search-and-replace</id><content type="html" xml:base="https://gosukiwi.github.io/vim/2022/04/19/vim-advanced-search-and-replace.html"><![CDATA[<p>I find search and replace to be a remarkably interesting topic, because it touches on so many Vim concepts.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="https://gosukiwi.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://gosukiwi.github.io/" rel="alternate" type="text/html" /><updated>2022-05-15T13:23:08-03:00</updated><id>https://gosukiwi.github.io/feed.xml</id><title type="html">gosukiwi</title><subtitle>Developer, gamer, martial artist, and cat lover from Argentina</subtitle><entry><title type="html">Python unittest Cheatsheet</title><link href="https://gosukiwi.github.io/webdev/python/2022/05/15/python-unittest-cheatsheet.html" rel="alternate" type="text/html" title="Python unittest Cheatsheet" /><published>2022-05-15T00:00:00-03:00</published><updated>2022-05-15T00:00:00-03:00</updated><id>https://gosukiwi.github.io/webdev/python/2022/05/15/python-unittest-cheatsheet</id><content type="html" xml:base="https://gosukiwi.github.io/webdev/python/2022/05/15/python-unittest-cheatsheet.html"><![CDATA[<p>Python is a great language with lots of awesome libraries and resources. Most
+of those resources are beginner-focused though, and spend lots of words to say
+very little. Not to mention the awful advertisements, pop-ups, paywalls, etc.</p>
+
+<p>The <a href="https://docs.python.org/3/library/unittest.html">official docs</a> on
+<code class="language-plaintext highlighter-rouge">unittest</code> are good, but it feels too encyclopedic, and it’s hard to find a
+quick overview.</p>
+
+<p>In this post I’ll give you just that, a quick and to the point overview on how
+to test with Python’s built-in <code class="language-plaintext highlighter-rouge">unittest</code> framework.</p>
+
+<h1 id="test-discovery">Test Discovery</h1>
+<p>Python’s <code class="language-plaintext highlighter-rouge">unittest</code> module includes test discovery, which means it will scan
+your project folder and find all relevant test files to run.</p>
+
+<p>You can customize it if you want, the <em>convention</em> is this:</p>
+
+<ul>
+  <li>Put your tests into a <code class="language-plaintext highlighter-rouge">test</code> directory in your project root</li>
+  <li>The <code class="language-plaintext highlighter-rouge">test</code> directory must be a valid package, and include a <code class="language-plaintext highlighter-rouge">__init__.py</code></li>
+  <li>All sub-packages must also include a <code class="language-plaintext highlighter-rouge">__init__.py</code></li>
+  <li>Each module you want to test must start with <code class="language-plaintext highlighter-rouge">test</code>, for example: <code class="language-plaintext highlighter-rouge">test_my_class.py</code></li>
+  <li>Each test method must start with <code class="language-plaintext highlighter-rouge">test</code></li>
+</ul>
+
+<p>Here’s an example directory structure:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>test
+├── __init__.py
+└── my_package
+    ├── __init__.py
+    ├── game
+    │   ├── __init__.py
+    │   └── core
+    │       ├── __init__.py
+    │       ├── test_pubsub.py
+    │       ├── test_sprite.py
+    │       └── test_vector.py
+    ├── parser
+    │   ├── __init__.py
+    │   ├── test_input.py
+    │   ├── test_mapfile_parser.py
+    │   └── test_parser.py
+    └── test_models.py
+</code></pre></div></div>
+
+<p>And here’s an example test file:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">from</span> <span class="nn">engine.game.core.vector</span> <span class="kn">import</span> <span class="n">Vector</span>
+
+
+<span class="k">class</span> <span class="nc">TestVector</span><span class="p">(</span><span class="n">unittest</span><span class="p">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">test_add</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">v1</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">v2</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">v3</span> <span class="o">=</span> <span class="n">v1</span> <span class="o">+</span> <span class="n">v2</span>
+
+        <span class="bp">self</span><span class="p">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">v3</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">v3</span><span class="p">.</span><span class="n">y</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>With that in place, you can run your tests by simply running <code class="language-plaintext highlighter-rouge">python -m
+unittest</code>.</p>
+
+<p>You can see all of the assert methods <a href="https://docs.python.org/3/library/unittest.html#assert-methods">in the official
+documentation</a>.</p>
+
+<h2 id="mocking">Mocking</h2>
+<p>The <code class="language-plaintext highlighter-rouge">unittest</code> module includes great mocking support. When mocking, I like to
+follow a few rules:</p>
+
+<ul>
+  <li>Never mock the object under test</li>
+  <li>Mock as little as possible</li>
+  <li>Make sure the mock object mimics the implementation of the real object</li>
+</ul>
+
+<p>We can easily do all this with <code class="language-plaintext highlighter-rouge">unittest.mock</code>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">import</span> <span class="nn">appgamekit</span> <span class="k">as</span> <span class="n">agk</span>
+<span class="kn">from</span> <span class="nn">unittest.mock</span> <span class="kn">import</span> <span class="n">patch</span><span class="p">,</span> <span class="n">Mock</span>
+<span class="kn">from</span> <span class="nn">engine.game.core.sprite</span> <span class="kn">import</span> <span class="n">Sprite</span>
+<span class="kn">from</span> <span class="nn">engine.game.core.image</span> <span class="kn">import</span> <span class="n">Image</span>
+
+
+<span class="k">class</span> <span class="nc">TestSprite</span><span class="p">(</span><span class="n">unittest</span><span class="p">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="o">@</span><span class="n">patch</span><span class="p">(</span><span class="s">'engine.game.core.sprite.agk'</span><span class="p">,</span> <span class="n">spec</span><span class="o">=</span><span class="n">agk</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_dispose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agk</span><span class="p">):</span>
+        <span class="n">agk</span><span class="p">.</span><span class="n">create_sprite</span><span class="p">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="mi">7</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">Image</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">sprite</span> <span class="o">=</span> <span class="n">Sprite</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+        <span class="n">sprite</span><span class="p">.</span><span class="n">dispose</span><span class="p">()</span>
+
+        <span class="n">agk</span><span class="p">.</span><span class="n">delete_sprite</span><span class="p">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+        <span class="n">image</span><span class="p">.</span><span class="n">dispose</span><span class="p">.</span><span class="n">assert_called_once</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>You can read <a href="https://docs.python.org/3/library/unittest.mock.html#quick-guide">the official
+documentation</a>
+for more details, but the gist is this:</p>
+
+<ul>
+  <li>You can use the <code class="language-plaintext highlighter-rouge">@patch</code> decorator to replace anything with a mock (so you
+don’t <strong>need</strong> dependency injection, although it should be preferred as it’s
+better object oriented design)</li>
+  <li>You can use <code class="language-plaintext highlighter-rouge">Mock</code> to create a mock object, which will <em>mimic</em> the object
+passed in <code class="language-plaintext highlighter-rouge">spec=</code>. This is very important, as if we ever change the real
+object, we want our tests to complain</li>
+</ul>
+
+<p>In our code, <code class="language-plaintext highlighter-rouge">agk</code> is an <a href="https://fascimania.itch.io/appgamekit-for-python">external
+library</a> which creates a
+game window, sprites, sounds, text, and all that’s required to create a game.
+We don’t want to test the real thing in a unit test (we would do it in an
+integration test), so we mock it away.</p>
+
+<p>We pass the <code class="language-plaintext highlighter-rouge">spec</code> parameter to the <code class="language-plaintext highlighter-rouge">@patch</code> decorator so we make sure the
+test will raise an error if we use something in the mock that doesn’t exist in
+the real object.</p>
+
+<p>We set the return value of the <code class="language-plaintext highlighter-rouge">agk.create_sprite</code> method, and also create a
+mock for <code class="language-plaintext highlighter-rouge">Image</code>, which is a dependency of <code class="language-plaintext highlighter-rouge">Sprite</code>. Note that we also pass
+<code class="language-plaintext highlighter-rouge">spec</code> there, and an <code class="language-plaintext highlighter-rouge">id</code> attribute which will be equal to <code class="language-plaintext highlighter-rouge">1</code>.</p>
+
+<p>We can then assert our mocks were called in the way we expect to finish our
+little test.</p>
+
+<h2 id="thats-it">That’s it!</h2>
+<p>If you want to know more about testing in general, feel free to check out my
+other blog post: <a href="https://blog.beezwax.net/oop-fundamentals-quick-and-dirty-guide-to-testing/">OOP Fundamentals: Quick and Dirty Guide to
+Testing</a>.</p>
+
+<p>For the complete documentation on Python’s <code class="language-plaintext highlighter-rouge">unittest</code>, check out <a href="https://docs.python.org/3/library/unittest.html">the official
+documentation</a>.</p>]]></content><author><name></name></author><category term="webdev" /><category term="python" /><summary type="html"><![CDATA[Python is a great language with lots of awesome libraries and resources. Most of those resources are beginner-focused though, and spend lots of words to say very little. Not to mention the awful advertisements, pop-ups, paywalls, etc.]]></summary></entry><entry><title type="html">Vim Advanced Search and Replace</title><link href="https://gosukiwi.github.io/vim/2022/04/19/vim-advanced-search-and-replace.html" rel="alternate" type="text/html" title="Vim Advanced Search and Replace" /><published>2022-04-19T20:52:00-03:00</published><updated>2022-04-19T20:52:00-03:00</updated><id>https://gosukiwi.github.io/vim/2022/04/19/vim-advanced-search-and-replace</id><content type="html" xml:base="https://gosukiwi.github.io/vim/2022/04/19/vim-advanced-search-and-replace.html"><![CDATA[<p>I find search and replace to be a remarkably interesting topic, because it touches on so many Vim concepts.</p>
 
 <p>When I started using Vim, one of the first things I wanted to do was search for some text in my project and replace it with something else.</p>
 
