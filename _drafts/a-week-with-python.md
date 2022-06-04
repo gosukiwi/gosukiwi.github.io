@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "A week with Python"
+title:  "A web developer thoughts on Python"
 date:   2022-04-29
 categories: webdev python
 ---
@@ -8,17 +8,17 @@ I've been dabbling into [Python](https://www.python.org/) lately. It was a
 great fit for a personal project of mine.
 
 I'm a full-stack senior web developer, working mostly with Rails and Node at
-the moment. But I also dabble into programming languages (parsers, compilers)
-and game development.
+the moment. I also have experience with other stacks, like PHP and .NET, and
+dabble into programming languages (parsers, compilers) and game development.
 
-Being a lover of the [Ruby](https://www.ruby-lang.org/en/) programming
-language, I never really thought about trying Python. I thought "meh they are
-very similar, any is fine". And while that is true to some extent, they are
-also quite opposite in other aspects. And that is a good thing :)
+Being a [Ruby](https://www.ruby-lang.org/en/) fanboy, I never really thought
+about trying Python. I figured "meh they are very similar, any is fine". And
+while that is true to some extent, they are also quite opposite in other
+aspects. And that is a good thing :)
 
-After trying Python for a little bit, I think it's an useful tool to have in
-your toolbelt. In this post, I'll elaborate why, while I comment on the
-similarities and differences with Ruby, and to some extent, JavaScript.
+After trying Python for a little bit, I think it's a very useful tool to have.
+In this post, I'll elaborate why, while I comment on the similarities and
+differences with Ruby, and some other popular programming languages.
 
 ## Elegance
 Python is great, but the thing I miss the most about Ruby is it's elegance and

@@ -16,7 +16,7 @@ life, there's no one-size-fits-all solution.
 This approach is not ideal if:
 
 * Your application is really small and simple
-* You care about the final size (in KB) of your application
+* You care about the final size (as in KB) of your application
 * You have non-standard needs
 * Your team doesn't have experience with the framework you want to use
 * You don't want to be locked-in to a single framework or library
@@ -31,7 +31,7 @@ your project.
 
 ## MVP: Model-View-Presenter
 Model-View-Presenter, or MVP for short, it's a design pattern from the 90's
-which was created to deal with complex user interfaces (think Desktop apps).
+that was created to deal with complex user interfaces (think Desktop apps).
 
 Quoting from [Wikipedia](https://en.wikipedia.org/wiki/Model–view–presenter):
 
@@ -77,7 +77,7 @@ update model  on model changed
 
 ```
 
-It's important that the model and view layers can't access each other
+It's important that the model and view layers don't access each other
 directly. They communicate through the presenter.
 
 In fact, the model and view layers don't know about the presenter layer
@@ -91,8 +91,8 @@ If all of that seems abstract, don't worry, I will show a concrete example in
 the next section.
 
 ## Show me the code already
-The data flow diagram is helpful to understand how MVP works. Here is how it
-would work in real app:
+The data flow diagram is helpful to understand how MVP works, but here is how
+it would work in real app:
 
 * A user clicks a button
 * The view triggers an event: "My button was clicked"
@@ -101,7 +101,7 @@ would work in real app:
 * Because the models were changed, they trigger an event "I was changed"
 * The presenter was listening to this event, and re-renders the view 
 
-Let's see some code already, let's say we have a very simple model layer:
+Let's see some code already. Assume we have a very simple model layer:
 
 ```javascript
 class Counter extends PubSub {
@@ -150,7 +150,6 @@ class View extends PubSub {
 
 Finally, our presenter:
 
-
 ```javascript
 class Presenter {
   constructor(el) {
@@ -176,8 +175,8 @@ const presenter = new Presenter(container);
 presenter.render();
 ```
 
-This is a very simple example, but we can see the flow clearly. You can see a
-working example below:
+This is a very simple example, but we can see the data flow clearly. You can
+see a working example below:
 
 <iframe src="https://codesandbox.io/embed/mvp-example-gk0p6z?fontsize=14&hidenavigation=1&module=%2Fsrc%2Findex.js&theme=dark"
      style="width:100%; height:500px; border:0; border-radius: 0; overflow:hidden;"
@@ -186,80 +185,70 @@ working example below:
      sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
    ></iframe>
 
-## Models: FileMaker and FMBond
-TODO
+## FileMaker and FMBond
+At [Beezwax](https://www.beezwax.net/) we do a lot of FileMaker work. So much
+that we have created [FMBond](https://www.npmjs.com/package/@beezwax/fmbond),
+an npm package which makes the interaction between FileMaker and JavaScript
+quite easy.
 
-The model layer is where all the entities of your business logic lives. Models
-are simple (Plain Old JavaScript Objects) and mostly just a collection of
-attributes.
+FileMaker can create a WebView (an instance of Safari) and render a front-end
+JavaScript application just fine, but it has some considerable differences
+from regular front-end apps. The main difference being that your data will
+come from FileMaker instead of an HTTP API.
 
-FileMaker data is transformed into _models_, using a hierarchical structure:
+Because MVP allows us to abstract the model layer away, this is not an issue
+for us.
 
-```javascript
-const fm = new FileMakerService()
-fm.performScript('some script to get data', (data) => {
-  const repository = new Repository(data)
-  const budget = repository.budgets.find((budget) => budget.amount > 100)
-  budget.forecasts[0].segment.name
-})
-```
-
-You can use the [Store](store.js) class to create your repository:
+FileMaker data is transformed into _models_ (plain old JavaScript objects),
+using a hierarchical structure (eg: A `Post` model has many `Comment` models,
+and can be accessed as `post.comments`):
 
 ```javascript
-class MyRepository {
-  constructor (data) {
-    this.budgets = this.parseBudgets(data)
-  }
-
-  parseBudgets (data) {
-    const store = new Store()
-
-    data.budgets.forEach((raw) => {
-      const budget = new Budget({ id: raw.ID, amount: raw.AMOUNT })
-      store.upsert(budget.id, budget)
-    })
-
-    return store
-  }
-}
-
-class Budget {
-  constructor (id, amount) {
-    this.id = id
-    this.amount = amount
-  }
-}
+FMBond
+  .PerformScript('some script to get data', { param1: 'somevalue' })
+  .then((data) => {
+    const repository = new Repository(data)
+    const el = document.querySelector('#my-app')
+    const app = new Presenter({ repository, el })
+  })
 ```
 
-## Views
-Views are in charge of displaying UI (HTML in this case), and responding to
-user events.
+The repository is the entry point to access your data. You can think of it as
+a `db` object.
 
-This library provides a [View](view.js) class which can be used to create HTML
-elements and handle events.
+The API of the repository could look like this:
 
-Please refer to that class for documentation on how to use it.
+```
+const data = ... get from filemaker or other source
+const repo = new Repository(data)
 
-### Using your own View
-You don't have to use the `View` class. If you need a very simple view, you
-can simply create it yourself:
+// find a post by id
+const post = repo.posts.find(1) // find by id 1
+post.comments.length // access related models
 
-```javascript
-class MyView {
-  constructor (data) {
-    this.data = data
-  }
-
-  render (el) {
-    el.innerHTML = `<span>Hello, ${this.data.name}!</span>`  
-  }
-}
+// find a comment by id
+const comment = repo.comments.find(1) // find comment
+const post = comment.post // access related model
 ```
 
-### Using React Views
-If needed, a view can use React. Using regular React tools, like component
-state and event handlers:
+The implementation can vary from project to project, what's important is to
+have a central place where you can get access to all your models.
+
+## Swapping Parts
+This architecture gives us lots of flexibility and room to grow our app.
+
+We can, for example, swap the model layer from FileMaker to a new object that
+uses HTTP requests instead, and move our app to a regular browser instead of
+having it live in FileMaker. We can even have it live at both places, and
+choose what implementation we want to use depending on the environment. We
+simply use the FileMaker model layer when in a FileMaker web view, and the
+HTTP model layer when in a regular browser.
+
+As long as both model layers implement the same interface, we're good. We
+could even share some tests to make sure they behave the same way.
+
+We could also replace our simple view with something like React, and take
+advantage of regular React tools, like component state and event handlers:
 
 ```javascript
 class MyPresenter {
@@ -292,44 +281,3 @@ class MyPresenter {
   }
 }
 ```
-
-## Presenters
-Presenters are the entry point of the application, and where the business
-logic lives. They deal with models and views, syncing them, making then play
-together to _present_ the final product to the user.
-
-```javascript
-class ExamplePresenter {
-  constructor ({ el, repo }) {
-    repo.on('changed', () => this.render(el))
-    this.render(el)
-  }
-
-  // private
-
-  render (el) {
-    const myView = new MyView({ budgets: this.calculateBudgets() })
-    myView.on('something-happened', () => {
-       // do something, update models if needed
-    })
-    myView.render(el)
-  }
-
-  calculateBudgets () {
-    return repo.budgets.filter((budget) => budget.amount < 1000)
-  }
-}
-
-// Initialize app
-const fm = new FileMakerService()
-fm.performScript('get data', (data) => {
-  const repo = new MyRepository(data)
-  const app = new ExamplePresenter({ el: document.body, repo })
-})
-```
-
-## Why
-With this architecture, we have a solid, easy to test foundation, as well as
-implementation flexibility. For example, we can easily replace (or mix) the
-view layer with something like React, or the Model layer could come from a
-_RESTful_ API instead of FileMaker.
