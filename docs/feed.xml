@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="https://gosukiwi.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://gosukiwi.github.io/" rel="alternate" type="text/html" /><updated>2022-05-15T13:23:08-03:00</updated><id>https://gosukiwi.github.io/feed.xml</id><title type="html">gosukiwi</title><subtitle>Developer, gamer, martial artist, and cat lover from Argentina</subtitle><entry><title type="html">Python unittest Cheatsheet</title><link href="https://gosukiwi.github.io/webdev/python/2022/05/15/python-unittest-cheatsheet.html" rel="alternate" type="text/html" title="Python unittest Cheatsheet" /><published>2022-05-15T00:00:00-03:00</published><updated>2022-05-15T00:00:00-03:00</updated><id>https://gosukiwi.github.io/webdev/python/2022/05/15/python-unittest-cheatsheet</id><content type="html" xml:base="https://gosukiwi.github.io/webdev/python/2022/05/15/python-unittest-cheatsheet.html"><![CDATA[<p>Python is a great language with lots of awesome libraries and resources. Most
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="https://gosukiwi.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://gosukiwi.github.io/" rel="alternate" type="text/html" /><updated>2022-10-26T16:01:38-03:00</updated><id>https://gosukiwi.github.io/feed.xml</id><title type="html">gosukiwi</title><subtitle>Developer, gamer, martial artist, and cat lover from Argentina</subtitle><entry><title type="html">Python unittest Cheatsheet</title><link href="https://gosukiwi.github.io/webdev/python/2022/05/15/python-unittest-cheatsheet.html" rel="alternate" type="text/html" title="Python unittest Cheatsheet" /><published>2022-05-15T00:00:00-03:00</published><updated>2022-05-15T00:00:00-03:00</updated><id>https://gosukiwi.github.io/webdev/python/2022/05/15/python-unittest-cheatsheet</id><content type="html" xml:base="https://gosukiwi.github.io/webdev/python/2022/05/15/python-unittest-cheatsheet.html"><![CDATA[<p>Python is a great language with lots of awesome libraries and resources. Most
 of those resources are beginner-focused though, and spend lots of words to say
 very little. Not to mention the awful advertisements, pop-ups, paywalls, etc.</p>
 
@@ -135,7 +135,44 @@ other blog post: <a href="https://blog.beezwax.net/oop-fundamentals-quick-and-di
 Testing</a>.</p>
 
 <p>For the complete documentation on Python’s <code class="language-plaintext highlighter-rouge">unittest</code>, check out <a href="https://docs.python.org/3/library/unittest.html">the official
-documentation</a>.</p>]]></content><author><name></name></author><category term="webdev" /><category term="python" /><summary type="html"><![CDATA[Python is a great language with lots of awesome libraries and resources. Most of those resources are beginner-focused though, and spend lots of words to say very little. Not to mention the awful advertisements, pop-ups, paywalls, etc.]]></summary></entry><entry><title type="html">Vim Advanced Search and Replace</title><link href="https://gosukiwi.github.io/vim/2022/04/19/vim-advanced-search-and-replace.html" rel="alternate" type="text/html" title="Vim Advanced Search and Replace" /><published>2022-04-19T20:52:00-03:00</published><updated>2022-04-19T20:52:00-03:00</updated><id>https://gosukiwi.github.io/vim/2022/04/19/vim-advanced-search-and-replace</id><content type="html" xml:base="https://gosukiwi.github.io/vim/2022/04/19/vim-advanced-search-and-replace.html"><![CDATA[<p>I find search and replace to be a remarkably interesting topic, because it touches on so many Vim concepts.</p>
+documentation</a>.</p>]]></content><author><name></name></author><category term="webdev" /><category term="python" /><summary type="html"><![CDATA[Python is a great language with lots of awesome libraries and resources. Most of those resources are beginner-focused though, and spend lots of words to say very little. Not to mention the awful advertisements, pop-ups, paywalls, etc.]]></summary></entry><entry><title type="html">Vim Relative File Autocomplete</title><link href="https://gosukiwi.github.io/vim/2022/04/29/vim-relative-file-autocomplete.html" rel="alternate" type="text/html" title="Vim Relative File Autocomplete" /><published>2022-04-29T00:00:00-03:00</published><updated>2022-04-29T00:00:00-03:00</updated><id>https://gosukiwi.github.io/vim/2022/04/29/vim-relative-file-autocomplete</id><content type="html" xml:base="https://gosukiwi.github.io/vim/2022/04/29/vim-relative-file-autocomplete.html"><![CDATA[<p>Vim’s file autocomplete (<code class="language-plaintext highlighter-rouge">&lt;C-x&gt;&lt;C-f&gt;</code>) works only for absolute paths (using
+the current working directory) as root.</p>
+
+<p>But in most languages, you want to use relative imports, and file autocomplete
+doesn’t work there. For that, I created the following <code class="language-plaintext highlighter-rouge">&lt;C-x&gt;&lt;C-x&gt;&lt;C-f&gt;</code>
+mapping:</p>
+
+<div class="language-vimscript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span><span class="p">!</span> <span class="nv">s:EnableRelativeAutocomplete</span><span class="p">()</span> abort
+  <span class="k">let</span> <span class="nv">b:relative_autocomplete_cleanup_pending</span> <span class="p">=</span> <span class="m">1</span>
+  <span class="k">lcd</span> %<span class="p">:</span><span class="k">p</span><span class="p">:</span><span class="k">h</span>
+<span class="k">endfunction</span>
+
+<span class="k">function</span><span class="p">!</span> <span class="nv">s:DisableRelativeAutocomplete</span><span class="p">()</span> abort
+  <span class="k">if</span> <span class="nb">exists</span><span class="p">(</span><span class="s1">'b:relative_autocomplete_cleanup_pending'</span><span class="p">)</span> &amp;&amp; <span class="nv">b:relative_autocomplete_cleanup_pending</span>
+    <span class="k">lcd</span> <span class="p">-</span>
+    <span class="k">let</span> <span class="nv">b:relative_autocomplete_cleanup_pending</span> <span class="p">=</span> <span class="m">0</span>
+  <span class="k">endif</span>
+<span class="k">endfunction</span>
+
+inoremap <span class="p">&lt;</span>C<span class="p">-</span><span class="k">x</span><span class="p">&gt;&lt;</span>C<span class="p">-</span><span class="k">x</span><span class="p">&gt;&lt;</span>C<span class="p">-</span><span class="k">f</span><span class="p">&gt;</span> <span class="p">&lt;</span>C<span class="p">-</span><span class="k">o</span><span class="p">&gt;:</span><span class="k">call</span> <span class="p">&lt;</span>SID<span class="p">&gt;</span>EnableRelativeAutocomplete<span class="p">()&lt;</span>CR<span class="p">&gt;&lt;</span>C<span class="p">-</span><span class="k">x</span><span class="p">&gt;&lt;</span>C<span class="p">-</span><span class="k">f</span><span class="p">&gt;</span>
+
+augroup relative_file_autocomplete
+  autocmd<span class="p">!</span>
+  autocmd <span class="nb">InsertLeave</span> * <span class="k">call</span> <span class="nv">s:DisableRelativeAutocomplete</span><span class="p">()</span>
+augroup END
+</code></pre></div></div>
+
+<p>You can simply copy-paste that into your <code class="language-plaintext highlighter-rouge">.vimrc</code>. With that in place, you can
+use relative file autocomplete by using <code class="language-plaintext highlighter-rouge">&lt;C-x&gt;&lt;C-x&gt;&lt;C-f&gt;</code>. It will work just
+like <code class="language-plaintext highlighter-rouge">&lt;C-x&gt;&lt;C-f&gt;</code> does.</p>
+
+<p>It does the trick by changing the current working directory to your current
+file’s directory when using that mapping, and changing back to the previous
+directory when you leave insert mode.</p>
+
+<script id="asciicast-nQEmOTdVQIWv0mJfsLTxFETTg" src="https://asciinema.org/a/nQEmOTdVQIWv0mJfsLTxFETTg.js" async=""></script>
+
+<p>Hope you find it as useful as I do!</p>]]></content><author><name></name></author><category term="vim" /><summary type="html"><![CDATA[Vim’s file autocomplete (&lt;C-x&gt;&lt;C-f&gt;) works only for absolute paths (using the current working directory) as root.]]></summary></entry><entry><title type="html">Vim Advanced Search and Replace</title><link href="https://gosukiwi.github.io/vim/2022/04/19/vim-advanced-search-and-replace.html" rel="alternate" type="text/html" title="Vim Advanced Search and Replace" /><published>2022-04-19T20:52:00-03:00</published><updated>2022-04-19T20:52:00-03:00</updated><id>https://gosukiwi.github.io/vim/2022/04/19/vim-advanced-search-and-replace</id><content type="html" xml:base="https://gosukiwi.github.io/vim/2022/04/19/vim-advanced-search-and-replace.html"><![CDATA[<p>I find search and replace to be a remarkably interesting topic, because it touches on so many Vim concepts.</p>
 
 <p>When I started using Vim, one of the first things I wanted to do was search for some text in my project and replace it with something else.</p>
 
