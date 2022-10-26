@@ -147,3 +147,9 @@ and has libraries that Ruby doesn't, like making Pyinstaller.
 ## Metaprogramming
 I'd give Ruby the small edge over this, but Python is surprisingly powerful
 for such a simple syntax.
+
+## Rails vs Django
+Rails comes packed with features, and it shows. While it's nice to have
+Django's admin panel, Rails ActiveRecord is just too powerful.
+
+Even if you only use "the good parts",
